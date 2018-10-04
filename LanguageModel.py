@@ -48,7 +48,7 @@ class LanguageModel():
 
         for chunk in self.get_chunks(source_files):
             vocab.update(self.get_tokens(nlp_basic(chunk)))
-            
+
         self.vocabulary = set([x[0] for x in vocab.most_common(self.max_vocab)] + ["<s>", "</s>", "UNK"])
         self.V = len(self.vocabulary)
 
@@ -61,7 +61,7 @@ class LanguageModel():
             while chunk:
                 chunk = fp.readlines(chunk_size)
                 if chunk: yield "\n".join(chunk)
-        
+
     def get_tokens(self, sentence):
         return [x.text.lower() for x in sentence if wordRE.search(x.text)]
 
@@ -70,17 +70,17 @@ class LanguageModel():
         self.set_probs(source_files)
 
     def set_probs(self, source_files):
-        for chunk in self.get_chunks(source_files): 
+        for chunk in self.get_chunks(source_files):
             doc = nlp_full(chunk)
 
             for sentence in doc.sents:
                 words=["<s>",] + self.get_tokens(sentence) + ["</s>",]
                 words = [x if x in self.vocabulary else "UNK" for x in words]
-            
+
                 self.unigrams.update(words)
                 for w1, w2 in zip(words[:-1], words[1:]):
                     self.bigrams[w1].update([w2])
-        
+
     def bigram_prob(self, w1, w2):
         first_word = w1 if w1 in self else "UNK"
         second_word = w2 if w2 in self else "UNK"
@@ -93,7 +93,7 @@ class LanguageModel():
         numerator = self.unigrams[word] + self.alpha
         denominator = sum(self.unigrams.values()) + (self.alpha * self.V)
         return log(numerator/denominator)
-    
+
     def __contains__(self, w):
         return w in self.vocabulary
 
