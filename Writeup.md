@@ -14,7 +14,7 @@ EditDistance takes in two commandline arguments--one required file that will be 
 
 4. The language model class has an alpha data member. When determining the numerator (which should not be zero, so we don't take the log of zero), you add in this alpha. Thus, you never take the log of zero.
 
-5. It returns if w is in the vocabulary.
+5. It returns if w is in the vocabulary. Specifically, it makes it so that x in LanguageModel checks if x is in the vocabulary.
 
 6. It returns a generator that can be used to make an iterator through all the chunks in the text.
 

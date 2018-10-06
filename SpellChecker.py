@@ -99,7 +99,9 @@ class SpellChecker:
         pass
 
     def check_text(text, fallback=False):
-        pass
+        doc = nlp(text)
+        sentences = doc.sents
+
 
     def autocorrect_sentence(sentence):
         pass
