@@ -88,15 +88,39 @@ class SpellChecker:
                 if num_subs == 1:
                     one_sub_away.append(model_word)
         return one_sub_away
+    
+    def generate_candidates_recurse(word_list, max_distance):
+        if max_distance == 0:
+            return word_list
+        new_list = []
+        for i.lowercase() in word_list:
+            insert_words = inserts(i)
+            delete_words = deletes(i)
+            sub_words = subs(i)
+            new_list.append(insert_words)
+            new_list.append(delete_words)
+            new_list.append(sub_words)
+        return generate_candidates_recurse(new_list, max_distance -1)
 
     def generate_candidates(word):
-        pass
-
-    def check_non_words(sentence, fallback=False):
-        pass
+        return generate_candidates_recurse([word.lowercase()], self.max_distance)
 
     def check_sentence(sentence, fallback=False):
-        pass
+        return_list = []
+        for i in sentence:
+            if i in LanguageModel:
+                return_list.append([i])
+            candidates = generate_candidates(i)
+            if candidates == []:
+                if fallback:
+                    return_list.append([i])
+                    break
+                else:
+                    return_list.append([])
+                    break
+            candidates = sorted(candidates, key = self.unigram_score(x) + cm_score(i, x), reverse = True)
+            return_list.append(candidates)
+        return return_list    
 
     def check_text(text, fallback=False):
         doc = nlp(text)
@@ -104,13 +128,22 @@ class SpellChecker:
 
 
     def autocorrect_sentence(sentence):
-        pass
+        possibilities = check_sentence(sentence, True)
+        possibilities = [x[0] for x in possibilities]
+        return possibilities
 
     def autocorrect_line(line):
         pass
 
     def suggest_sentence(sentence, max_suggestions):
-        pass
+        possibilities = check_sentence(sentence, True)
+        return_list = []
+        for i in possibilities:
+            if len(i) == 1:
+                return_list.append(i[0])
+            else:
+                return_list.append(i)
+        return return_list
 
     def suggest_text(text, max_suggestions):
         pass

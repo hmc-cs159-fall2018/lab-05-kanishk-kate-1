@@ -22,4 +22,4 @@ EditDistance takes in two commandline arguments--one required file that will be 
 
 LanguageModel takes in one or more UTF-8 encoded files containing the training set SOURCE as a positional argument (and combines them into a list). It also takes in an argument that is a file store, which is required and is where the trained model will be written out to. It takes in some float alpha, which is the amount to add to each entry, and an integer that determines how large the vocabulary is. 
 
-8.
+8. 
