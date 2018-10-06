@@ -92,6 +92,9 @@ class SpellChecker:
     def generate_candidates(word):
         pass
 
+    def check_non_words(sentence, fallback=False):
+        pass
+
     def check_sentence(sentence, fallback=False):
         pass
 
