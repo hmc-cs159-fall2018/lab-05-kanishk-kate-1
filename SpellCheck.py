@@ -1,6 +1,7 @@
 import spacy
 import EditDistance
 from LanguageModel import LanguageModel
+import string
 
 
 nlp = spacy.load("en", pipeline=["tagger", "parser"])
@@ -34,59 +35,31 @@ class SpellChecker:
 
     def inserts(self, word):
         one_insert_away = []
-        for model_word in self.language_model.vocabulary:
-            _, alignment = self.channel_model.align(word, model_word)
-            # If the length is too long, this word doesn't work
-            if len(alignment) > len(word) + 1:
-                break
-            num_inserts = 0
-            for pair in alignment:
-                if pair[0] != pair[1]:
-                    if pair[0] == '%' and num_inserts == 0:
-                        num_inserts += 1
-                    else:
-                        num_inserts = -1
-                        break
-                if num_inserts == 1:
-                    one_insert_away.append(model_word)
+        alphabet = string.ascii_lowercase
+        for i in range(len(word) + 1):
+            for letter in alphabet:
+                new_word = word[0:i] + letter + word[i:]
+                if new_word in self.language_model:
+                    one_insert_away.append(new_word)
         return one_insert_away
 
     def deletes(self, word):
         one_delete_away = []
-        for model_word in self.language_model.vocabulary:
-            _, alignment = self.channel_model.align(word, model_word)
-            # If the length is too long, this word doesn't work
-            if len(alignment) != len(word):
-                break
-            num_deletes = 0
-            for pair in alignment:
-                if pair[0] != pair[1]:
-                    if pair[1] == '%' and num_deletes == 0:
-                        num_deletes += 1
-                    else:
-                        num_deletes = -1
-                        break
-                if num_deletes == 1:
-                    one_delete_away.append(model_word)
+        for i in range(len(word)):
+            new_word = word[0:i] + word[i + 1:]
+            if new_word in self.language_model:
+                one_delete_away.append(new_word)
         return one_delete_away
 
     def substitutes(self, word):
         one_sub_away = []
-        for model_word in self.language_model.vocabulary:
-            _, alignment = self.channel_model.align(word, model_word)
-            # If the length is too long, this word doesn't work
-            if len(alignment) != len(word):
-                break
-            num_subs = 0
-            for pair in alignment:
-                if pair[0] != pair[1]:
-                    if '%' in pair:
-                        num_subs = -1
-                        break
-                    else:
-                        num_subs += 1
-                if num_subs == 1:
-                    one_sub_away.append(model_word)
+        alphabet = string.ascii_lowercase
+        for i in range(len(word)):
+            for letter in alphabet:
+                if letter != word[i]:
+                    new_word = word[0:i] + letter + word[i + 1:]
+                    if new_word in self.language_model:
+                        one_sub_away.append(new_word)
         return one_sub_away
 
     def generate_candidates_recurse(self, word_list, max_distance):
@@ -97,10 +70,11 @@ class SpellChecker:
             insert_words = self.inserts(i)
             delete_words = self.deletes(i)
             sub_words = self.substitutes(i)
-            new_list.append(insert_words)
-            new_list.append(delete_words)
-            new_list.append(sub_words)
-        return self.generate_candidates_recurse(new_list, max_distance -1)
+            new_list += insert_words
+            new_list += delete_words
+            new_list += sub_words
+        set_list = list(set(new_list + word_list))
+        return self.generate_candidates_recurse(set_list, max_distance -1)
 
     def generate_candidates(self, word):
         return self.generate_candidates_recurse([word], self.max_distance)
@@ -110,22 +84,23 @@ class SpellChecker:
         for i in sentence:
             if i in self.language_model:
                 return_list.append([i])
+                continue
             candidates = self.generate_candidates(i)
             if candidates == []:
                 if fallback:
                     return_list.append([i])
-                    break
+                    continue
                 else:
                     return_list.append([])
-                    break
+                    continue
             candidates = sorted(candidates, key = lambda x: self.unigram_score(x) + self.cm_score(i, x), reverse = True)
             return_list.append(candidates)
         return return_list
 
     def check_line(self, text, fallback=False):
-        doc = nlp(text)
-        sentences = doc.sents
-        sentences = [word.text for word in sentences]
+        sentence_doc = nlp(text)
+        sentences = sentence_doc.sents
+        sentences = [self.language_model.get_tokens(sentence) for sentence in sentences]
         result = []
         for sentence in sentences:
             checked_sentence = self.check_sentence(sentence)
@@ -140,7 +115,7 @@ class SpellChecker:
     def autocorrect_line(self, line):
         doc = nlp(line)
         sentences = doc.sents
-        sentences = [word.text for word in sentences]        
+        sentences = [self.language_model.get_tokens(sentence) for sentence in sentences]
         result = []
         for sentence in sentences:
             checked_sentence = self.autocorrect_sentence(sentence)
@@ -160,9 +135,9 @@ class SpellChecker:
     def suggest_line(self, text, max_suggestions):
         doc = nlp(text)
         sentences = doc.sents
-        sentences = [word.text for word in sentences]
+        sentences = [self.language_model.get_tokens(sentence) for sentence in sentences]
         result = []
         for sentence in sentences:
-            checked_sentence = self.suggest_sentence(sentence)
+            checked_sentence = self.suggest_sentence(sentence, max_suggestions)
             result += checked_sentence
         return result
