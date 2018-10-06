@@ -97,6 +97,7 @@ class LanguageModel():
     def __contains__(self, w):
         return w in self.vocabulary
 
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()

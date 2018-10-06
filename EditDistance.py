@@ -61,7 +61,7 @@ class EditDistanceFinder():
 
     def train_costs(self, alignments):
         counts = defaultdict(Counter)
-        [self.probs = defaultdict(lambda: defaultdict(float))]
+        self.probs = defaultdict(lambda: defaultdict(float))
 
         alphabet = [a for a in string.ascii_lowercase] + ['unk', '%']
 
@@ -121,6 +121,7 @@ class EditDistanceFinder():
                 j -= 1
                 alignments.append((self.BLANK, intended_word[j]))
 
+        print(list(reversed(alignments)))
         return list(reversed(alignments))
 
     def del_cost(self, char):
