@@ -93,7 +93,7 @@ class SpellChecker:
         if max_distance == 0:
             return word_list
         new_list = []
-        for i in word_list:
+        for i.lowercase() in word_list:
             insert_words = inserts(i)
             delete_words = deletes(i)
             sub_words = subs(i)
@@ -103,7 +103,7 @@ class SpellChecker:
         return generate_candidates_recurse(new_list, max_distance -1)
 
     def generate_candidates(word):
-        return generate_candidates_recurse([word], self.max_distance)
+        return generate_candidates_recurse([word.lowercase()], self.max_distance)
 
     def check_sentence(sentence, fallback=False):
         return_list = []
@@ -118,22 +118,30 @@ class SpellChecker:
                 else:
                     return_list.append([])
                     break
-            candidates = sorted(candidates, key = lambda x: (self.unigram_score(x), cm_score(i, x)), reverse = True)
+            candidates = sorted(candidates, key = self.unigram_score(x) + cm_score(i, x), reverse = True)
             return_list.append(candidates)
         return return_list    
-
 
     def check_text(text, fallback=False):
         pass
 
     def autocorrect_sentence(sentence):
-        pass
+        possibilities = check_sentence(sentence, True)
+        possibilities = [x[0] for x in possibilities]
+        return possibilities
 
     def autocorrect_line(line):
         pass
 
     def suggest_sentence(sentence, max_suggestions):
-        pass
+        possibilities = check_sentence(sentence, True)
+        return_list = []
+        for i in possibilities:
+            if len(i) == 1:
+                return_list.append(i[0])
+            else:
+                return_list.append(i)
+        return return_list
 
     def suggest_text(text, max_suggestions):
         pass
