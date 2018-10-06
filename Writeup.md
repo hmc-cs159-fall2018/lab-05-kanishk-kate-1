@@ -6,7 +6,7 @@ It is necessary because the training data only has so many errors--when spellche
 
 In prob, this creates a total failure--our probs dictionary starts with a default dict, which initializes all probabilities to zero. Thus, when we call self.probs[intd][obsv], we will get zero if they were never in the training data. We then take the log of this value--thus we will be taking the log(0), which is negative infinite, and will break the program.
 
-2. python3 EditDistance.py --s ed.pkl --source /data/spelling/wikipedia_misspellings.txt is the command you would want to run. 
+2. python3 EditDistance.py -s ed.pkl --source /data/spelling/wikipedia_misspellings.txt is the command you would want to run. 
 
 EditDistance takes in two commandline arguments--one required file that will be the output of the program (the trained model), and one non-required UTF-8 file that will be the training data. 
 
