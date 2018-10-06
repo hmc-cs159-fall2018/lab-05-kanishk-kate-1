@@ -121,7 +121,6 @@ class EditDistanceFinder():
                 j -= 1
                 alignments.append((self.BLANK, intended_word[j]))
 
-        print(list(reversed(alignments)))
         return list(reversed(alignments))
 
     def del_cost(self, char):
