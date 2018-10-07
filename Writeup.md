@@ -33,6 +33,16 @@ I was also surprised with how limited the vocabulary was in our spellchecker. As
 11. (Extension 8) We attempted to create a model whereby our spellchecker would learn from the vocabulary if it found that there were too many instances of the same misspelling. Our approach was very simple: We would create a large database of unknown words/common misspellings, and if it seemed like we were finding an unknown word extremely often, with an edit distance score that was very high from it's closest words, we would consider that word to be a proper word. At first, I used a random threshold of 15 (just for testing) and this caught many words like album, vandalism, wiki, etc, all of which are real words. At a first pass, therefore, this is a sensible metric.
 This is of course not how adaptive spell checkers are created in the real world. 
 
-12. (Extension 9)
+12. (Extension 9) The way we created our vocabulary model certainly helped with recognizing words that are only part of the internet. For example, our corrected version of a sentence was:
+
+"please note that sorenaaryamanesh is involved in an editing war by removing unbiased primary source material intended to remove pov of article"
+
+Whereas spell check got:
+
+"Please note that Sorenaaryamanesh is involved in an editing war by removing unbiased primary source material intended to remove POD of article."
+
+Our version is obviously the correct version, since it makes sense given the context of the sentence. Another example is the fragment: "btw you did an astonishingly good job breaking down" which was not a valid fragment in our original spellchecker, but it eventually learned that "btw" is a valid word (ispell seems to have had BTW in it's vocabulary already, however).
 
 13. (Extension 10) The interesting thing is that the most common methods for doing adaptive spell check are all deep learning based methods. For example, there are articles by various amateurs, such as [this](https://datascience.stackexchange.com/questions/16128/algorithms-and-techniques-for-spell-checking) one on stackexchange, and [this](https://towardsdatascience.com/creating-a-spell-checker-with-tensorflow-d35b23939f60) one on Medium discussing heavy duty tools like TensorFlow, Pandas and scikit-learn for datascience based approaches to adaptive spell checkers. There are also papers like [this](http://aclweb.org/anthology/P18-3021) one, published in 2018, that outline deep learning methodology for identifying new words in resource scarce lanaguages like Hindi or Malayalam. Another interesting tool is "seq2spell" that takes a sequence of words and then suggests a corrected spelling version of that sequence. While we read through many of these papers and tools, we couldn't find the time to fully implement any of these, especially because installing tensorFlow is nightmarishly difficult.
+
+Many of these models use neural networks, such as RNN's or LSTM's to try and establish patterns over long corpora of texts. A few of these exploit the work done by the gloVe vector team as well, trying to learn about the vector word distances in order to establish patterns in vector space. While the research done is extremely interesting, it was unfortunately extremely difficult to actually implement these ideas.
