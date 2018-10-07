@@ -14,6 +14,8 @@ class SpellChecker:
         self.channel_model = channel_model
         self.language_model = language_model
         self.max_distance = max_distance
+        self.unknown_words = dict()
+        self.threshold = 15
 
     def load_channel_model(self, fp):
         self.channel_model = EditDistance.EditDistanceFinder()
@@ -86,6 +88,13 @@ class SpellChecker:
             if i in self.language_model:
                 return_list.append([i])
                 continue
+            if i in self.unknown_words:
+                if self.unknown_words[i] > self.threshold:
+                    return_list.append([i])
+                    continue
+                self.unknown_words[i] += 1
+            elif i not in self.unknown_words:
+                self.unknown_words[i] = 0
             candidates = self.generate_candidates(i)
             if candidates == []:
                 if fallback:
