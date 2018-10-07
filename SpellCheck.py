@@ -2,6 +2,7 @@ import spacy
 import EditDistance
 from LanguageModel import LanguageModel
 import string
+import argparse
 
 
 nlp = spacy.load("en", pipeline=["tagger", "parser"])
@@ -73,8 +74,8 @@ class SpellChecker:
             new_list += insert_words
             new_list += delete_words
             new_list += sub_words
-        set_list = list(set(new_list + word_list))
-        return self.generate_candidates_recurse(set_list, max_distance -1)
+        set_list = list(set(new_list))
+        return self.generate_candidates_recurse(set_list, max_distance - 1)
 
     def generate_candidates(self, word):
         return self.generate_candidates_recurse([word], self.max_distance)

@@ -26,5 +26,6 @@ if __name__ == "__main__":
     for line in args.corpus:
         print("LINE: ", line)
         corrected = s.autocorrect_line(line)
+        corrected = " ".join(corrected)
         print("CORRECTED: ", corrected)
 

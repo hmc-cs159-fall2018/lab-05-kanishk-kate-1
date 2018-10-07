@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     print(s.check_line("they did not yb any menas"))
     """
-    >>> [['they'], ['did'], ['not'], ['by', 'b', 'ye', 'y', 'yo', 'ob', 'ya', 'ab'], ['any'], 
+    >>> [['they'], ['did'], ['not'], ['by', 'b', 'ye', 'y', 'yo', 'ob', 'ya', 'ab'], ['any'],
     >>>  ['means', 'mens', 'mena', 'zenas', 'menan', 'mends']]
     """
 

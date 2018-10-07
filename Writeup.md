@@ -22,4 +22,10 @@ EditDistance takes in two commandline arguments--one required file that will be 
 
 LanguageModel takes in one or more UTF-8 encoded files containing the training set SOURCE as a positional argument (and combines them into a list). It also takes in an argument that is a file store, which is required and is where the trained model will be written out to. It takes in some float alpha, which is the amount to add to each entry, and an integer that determines how large the vocabulary is. 
 
-8. 
+8. (Evaluation 6) The ispell spellchecker performed better in most cases that we analyzed. For every difference between the two, we saw it perform better about 7 to 8 out of 10 times. In the remaining times, ours performed better. There were many cases were they corrected the text to the same thing. In a few interesting cases, they corrected it to the same wrong word (one I thought was particularly interesting was recongise was left alone in both.)
+
+9. (Evaluation 7) Our spell check appears to have a much more limited vocabulary than the ispell one. For example, the word edit is changed almost universally to exit, while banned is changed to banded and phone is changed to shoe. However, the ispell checker leaves these correct words alone. However, I would argue our spellchecker handled incorrect contractions better (Im --> I m while ispell did Im --> Aim). There are some instances of our spellchecker performing better with some names/non-words, such as Lisak. Ispell turned this into Lisa, while ours preserved the true word Lisak, likely because it was too many changes away from a true word.
+
+10. (Evaluation 8) I was surprised by how both spellcheckers handled names--while there were many instances of the spellcheckers inaccurately "correcting" names, there were also a surprisingly large number of cases where they did not change them, even though the name or acronym is not in either spellchecker's dictionary. Upon further reflection, this makes sense with our spellchecker--many names are simply more than two edits/inserts/substitutions away from words in the dictionary.
+
+I was also surprised with how limited the vocabulary was in our spellchecker. As I mentioned in the previous problems, the spellchecker didn't recognize some words like edits and banned.

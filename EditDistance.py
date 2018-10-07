@@ -160,6 +160,8 @@ class EditDistanceFinder():
             intd = intended_char if intended_char in self.probs else "unk"
             obsv = observed_char if observed_char in self.probs[intd] else "unk"
             try:
+                if self.probs[intd][obsv] == 0.0:
+                    self.probs[intd][obsv] = 0.1
                 total_prob += log(self.probs[intd][obsv])
             except:
                 print(observed_word, intended_word)
