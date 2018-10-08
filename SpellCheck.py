@@ -9,13 +9,13 @@ nlp = spacy.load("en", pipeline=["tagger", "parser"])
 
 
 class SpellChecker:
-    def __init__(self,max_distance, channel_model=None, language_model=None):
+    def __init__(self, max_distance, channel_model=None, language_model=None, threshold=15):
         self.nlp = nlp
         self.channel_model = channel_model
         self.language_model = language_model
         self.max_distance = max_distance
         self.unknown_words = dict()
-        self.threshold = 15
+        self.threshold = threshold
 
     def load_channel_model(self, fp):
         self.channel_model = EditDistance.EditDistanceFinder()
@@ -94,7 +94,7 @@ class SpellChecker:
                     continue
                 self.unknown_words[i] += 1
             elif i not in self.unknown_words:
-                self.unknown_words[i] = 0
+                self.unknown_words[i] = 1
             candidates = self.generate_candidates(i)
             if candidates == []:
                 if fallback:
